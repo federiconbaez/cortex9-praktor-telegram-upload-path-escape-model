@@ -1,0 +1,125 @@
+{
+ "note": "Hand-written. Inert path strings; no Telegram, Docker or filesystem I/O. The advisory's example of a workspace instruction file is replaced here by the synthetic name NOTES.md.",
+ "cases": [
+  {
+   "id": "p01_three_dotdot",
+   "class": "pos",
+   "site": "telegram",
+   "filename": "../../../NOTES.md",
+   "timestamp": 123,
+   "expected": {
+    "pre": "IN_VOLUME",
+    "post": "IN_UPLOADS"
+   },
+   "why": "uploads/123_../../../NOTES.md joins to /vol/NOTES.md (c3731eed:L55-56); post path.Base leaves uploads/123_NOTES.md (c3731eed:L76)"
+  },
+  {
+   "id": "p02_four_dotdot",
+   "class": "pos",
+   "site": "telegram",
+   "filename": "../../../../NOTES.md",
+   "timestamp": 123,
+   "expected": {
+    "pre": "ESCAPES_VOLUME",
+    "post": "IN_UPLOADS"
+   },
+   "why": "one more .. after the timestamp-glued first .. leaves /vol and lands at /NOTES.md pre; post Base stays in uploads/"
+  },
+  {
+   "id": "p03_foo_dotdot",
+   "class": "pos",
+   "site": "telegram",
+   "filename": "foo/../../x.txt",
+   "timestamp": 123,
+   "expected": {
+    "pre": "IN_VOLUME",
+    "post": "IN_UPLOADS"
+   },
+   "why": "uploads/123_foo/../../x.txt joins to /vol/x.txt"
+  },
+  {
+   "id": "p04_write_dotdot",
+   "class": "pos",
+   "site": "write",
+   "filename": "../etc/x",
+   "timestamp": 123,
+   "expected": {
+    "pre": "ESCAPES_VOLUME",
+    "post": "REJECTED"
+   },
+   "why": "WriteVolumeBytes alone: Join(/vol, ../etc/x) is /etc/x (c3731eed:L55-56); post rejects (c3731eed:L59-62)"
+  },
+  {
+   "id": "p05_write_foo_dotdot",
+   "class": "pos",
+   "site": "write",
+   "filename": "foo/../../x",
+   "timestamp": 123,
+   "expected": {
+    "pre": "ESCAPES_VOLUME",
+    "post": "REJECTED"
+   },
+   "why": "Join(/vol, foo/../../x) is /x; post rejects"
+  },
+  {
+   "id": "n01_plain",
+   "class": "neg",
+   "site": "telegram",
+   "filename": "ok.txt",
+   "timestamp": 123,
+   "expected": {
+    "pre": "IN_UPLOADS",
+    "post": "IN_UPLOADS"
+   },
+   "why": "ordinary filename stays under uploads/"
+  },
+  {
+   "id": "n02_write_under_uploads",
+   "class": "neg",
+   "site": "write",
+   "filename": "uploads/ok.txt",
+   "timestamp": 123,
+   "expected": {
+    "pre": "IN_UPLOADS",
+    "post": "IN_UPLOADS"
+   },
+   "why": "a path already under uploads/ is accepted by the /vol prefix check"
+  },
+  {
+   "id": "o01_glued_dotdot",
+   "class": "observation",
+   "site": "telegram",
+   "filename": "../etc/x",
+   "timestamp": 123,
+   "expected": {
+    "pre": "IN_UPLOADS",
+    "post": "IN_UPLOADS"
+   },
+   "why": "the timestamp prefix glues the first .. into the name 123_.., so ../etc/x does not escape uploads/ on the Telegram path. Not a separate finding. WriteVolumeBytes on the raw name is p04."
+  },
+  {
+   "id": "o02_base_dotdot",
+   "class": "observation",
+   "site": "telegram",
+   "filename": "..",
+   "timestamp": 123,
+   "expected": {
+    "pre": "IN_UPLOADS",
+    "post": "IN_UPLOADS"
+   },
+   "why": "Go path.Base('..') is '..'; the volume path becomes uploads/123_.., which is a regular name under uploads/, not a parent component"
+  },
+  {
+   "id": "o03_backslash",
+   "class": "observation",
+   "site": "telegram",
+   "filename": "..\\..\\NOTES.md",
+   "timestamp": 123,
+   "expected": {
+    "pre": "IN_UPLOADS",
+    "post": "IN_UPLOADS"
+   },
+   "why": "Go path treats backslash as an ordinary character, not a separator. Observation only; not a Windows filepath model."
+  }
+ ]
+}

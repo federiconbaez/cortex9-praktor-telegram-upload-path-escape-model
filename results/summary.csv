@@ -1,0 +1,9 @@
+class,version,outcome,n
+neg,post,IN_UPLOADS,2
+neg,pre,IN_UPLOADS,2
+observation,post,IN_UPLOADS,3
+observation,pre,IN_UPLOADS,3
+pos,post,IN_UPLOADS,3
+pos,post,REJECTED,2
+pos,pre,ESCAPES_VOLUME,3
+pos,pre,IN_VOLUME,2

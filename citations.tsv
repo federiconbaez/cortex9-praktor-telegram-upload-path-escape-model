@@ -1,0 +1,9 @@
+tag	start	end	sha256	what
+c3731eed	55	56	9fd15d47e4abba9ad77406ba3bff81fe09e8c2376f83bbc546602ba063d5fcd9	pre: path.Join then TrimPrefix, no escape check
+c3731eed	57	63	62acf0697ce45e0be6465f0d8590a83508517506a8ab84e0f8c041da46196f25	post: Join, reject unless /vol or /vol/, then TrimPrefix of cleaned
+c3731eed	59	62	672413ace5b4c6ea6b4048e9906173e29b34bfa1d2f5eb3d03663549c9357cc1	post: cleaned := path.Join("/vol", filePath); reject escape
+c3731eed	63	63	60d11d8e89dc6068ce33c3225ad727b1084321b86c041143084ad6ed38219c8e	post: TrimPrefix(cleaned, "/")
+c3731eed	75	75	6c198f7982a5c9610b0229669319afac518923f2bb0b9246531bf83d5bcbe752	pre: media-group volumePath concatenates att.Name
+c3731eed	76	76	abd8c9ee4767aed8dfb45761f25b352774b4333ae13a603fd57a71fbeea06996	post: path.Base(att.Name) at the media-group upload site
+c3731eed	84	84	a2d1be9cef5a20d51aa296adb0fe34af404ea9e88a2085849527db5eb1ce1076	pre: processMessage volumePath concatenates attachment.Name
+c3731eed	85	85	c36498c4354af71007d53d89ede946b3a770998c7d6fd38e7128640a004ae197	post: path.Base(attachment.Name) at the processMessage upload site
